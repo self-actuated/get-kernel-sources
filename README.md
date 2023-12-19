@@ -4,7 +4,7 @@ Get the Kernel sources for actuated to build with kmod or DKMS etc
 Usage:
 
 ```yaml
-- with: self-actuated/get-kernel-sources@master
+- uses: self-actuated/get-kernel-sources@master
 ```
 
 The version will be determined via `uname -r`, i.e. `5.10.201`.
