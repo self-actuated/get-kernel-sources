@@ -25,11 +25,11 @@ Cache saved successfully
 Cache saved with key: Linux-aarch64-6.1.90
 ```
 
-To enable caching, you just need to pass `cache: 'true'` input, eg:
+Caching is enabled by default; to disable it, you just need to pass `cache: 'false'` input, eg:
 ```yaml
 - uses: self-actuated/get-kernel-sources@master
   with:
-    cache: 'true'
+    cache: 'false'
 ```
 
 
