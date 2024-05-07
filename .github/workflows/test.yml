@@ -1,0 +1,39 @@
+name: Test composite action
+on:
+  pull_request:
+    paths:
+      - 'action.yml'
+  workflow_dispatch:    
+
+jobs:
+  test-composite-action:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo kernelrelease
+        run: uname -a
+    
+      - name: Test action
+        uses: ./
+        with:
+          cache: 'true'
+          
+      - name: Check kernel sources
+        run: ls -la /usr/src
+  
+  test-composite-action-cached:
+    runs-on: ubuntu-latest
+    needs: test-composite-action
+    steps:
+      - name: Echo kernelrelease
+        run: uname -a
+        
+      - name: Check kernel sources (empty)
+        run: ls -la /usr/src  
+    
+      - name: Test subsequent cached call
+        uses: ./
+        with:
+          cache: 'true'
+      
+      - name: Check kernel sources again
+        run: ls -la /usr/src    
