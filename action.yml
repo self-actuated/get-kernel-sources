@@ -9,7 +9,7 @@ inputs:
   cache:
     description: Whether to enable caching for the downloaded sources
     required: false
-    default: 'false'
+    default: 'true'
   
 runs:
     using: 'composite'
