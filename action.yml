@@ -4,21 +4,46 @@ description: 'Download the Kernel source to build a kmod or dmks in actuated'
 branding:
   icon: 'arrow-right-circle'
   color: 'gray-dark'
+  
+inputs:
+  cache:
+    description: Whether to enable caching for the downloaded sources
+    required: false
+    default: 'false'
+  
 runs:
     using: 'composite'
     steps:
       - name: Install git if not present
         shell: bash
-        id: install-tmux
         run: |
            if ! [ -x "$(command -v git)" ]; then
             echo Installing git
             sudo apt update -qqqy && sudo apt install -qqqy git
            fi
+      
+      - name: Reset permissions of /usr/src for runner
+        shell: bash
+        run: |
+          sudo chown -R runner:docker /usr/src
+
+      - name: Store KERNEL_RELEASE
+        shell: bash
+        run: |
+          echo "KERNEL_RELEASE=$(uname -r)" >> $GITHUB_ENV
+      
+      - name: Cache Kernel sources
+        if: inputs.cache == 'true'
+        id: cache-kernel-sources
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/src/linux
+          key: ${{ runner.os }}-${{ runner.arch }}-${{env.KERNEL_RELEASE}}     
            
       - name: Clone Kernel sources and link to /usr/src/linux
         shell: bash
-        id: download-link-sources
+        if: ${{ steps.cache-kernel-sources.outputs.cache-hit != 'true' }}
         run: |
           sudo mkdir -p /usr/src
           sudo git clone --depth 1 --branch v$(uname -r) git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git /usr/src/linux
