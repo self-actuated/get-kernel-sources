@@ -15,12 +15,15 @@ You can then proceed with a DKMS or kmod build of whatever you require such as e
 
 ## Caching the sources
 
-The sources for the Kernel may be quicker to download directly via git, however caching is also an option via: [actions/cache](https://github.com/actions/cache)
+Caching with [actions/cache](https://github.com/actions/cache) is likely to improve the speed of getting the Kernel sources, rather than fetching them directly from git.
 
 The following workflow factors in the OS, CPU archiecture and Kernel version into the cache key:
 
 ```yaml
     steps:
+      - name: Reset permissions of /usr/src for runner
+        run: |
+          sudo chown -R runner:docker /usr/src
       - name: Set TARGET_ARCH
         run: |
           echo "TARGET_ARCH=$(uname -m)" >> $GITHUB_ENV
