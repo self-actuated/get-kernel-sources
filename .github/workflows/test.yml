@@ -27,13 +27,20 @@ jobs:
       - name: Echo kernelrelease
         run: uname -a
         
+      - name: Store KERNEL_RELEASE
+        shell: bash
+        run: |
+          echo "KERNEL_RELEASE=$(uname -r)" >> $GITHUB_ENV  
+        
       - name: Check kernel sources (empty)
-        run: ls -la /usr/src  
+        run: ls -la /usr/src
     
-      - name: Test subsequent cached call
-        uses: ./
+      - name: Retrieve cached kernel sources
+        uses: actions/cache@v4
         with:
-          cache: 'true'
+          path: |
+            /usr/src/linux
+          key: ${{ runner.os }}-${{ runner.arch }}-${{env.KERNEL_RELEASE}}     
       
       - name: Check kernel sources again
-        run: ls -la /usr/src    
+        run: ls -la /usr/src   
