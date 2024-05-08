@@ -46,8 +46,12 @@ runs:
         if: ${{ steps.cache-kernel-sources.outputs.cache-hit != 'true' }}
         run: |
           sudo mkdir -p /usr/src
-          sudo git clone --depth 1 --branch v$(uname -r) git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git /usr/src/linux
-          sudo rm /lib/modules/$(uname -r)/build
-          sudo ln -s /usr/src/linux-headers-$(uname -r)/ /lib/modules/$(uname -r)/build
-          sudo rm /lib/modules/$(uname -r)/source
-          sudo ln -s /usr/src/linux-headers-$(uname -r)/ /lib/modules/$(uname -r)/source
+          sudo git clone --depth 1 --branch v$KERNEL_RELEASE git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git /usr/src/linux
+
+      - name: Create proper symlinks
+        shell: bash
+        run: |
+          sudo rm /lib/modules/$KERNEL_RELEASE/build
+          sudo ln -s /usr/src/linux-headers-$KERNEL_RELEASE/ /lib/modules/$KERNEL_RELEASE/build
+          sudo rm /lib/modules/$KERNEL_RELEASE/source
+          sudo ln -s /usr/src/linux-headers-$KERNEL_RELEASE/ /lib/modules/$KERNEL_RELEASE/source
